@@ -13,19 +13,25 @@ server_ip = "127.0.0.1"
 server_port = 4312
 
 server.bind((server_ip, server_port))
-# IP_address = str(sys.argv[1]) 
-# Port = int(sys.argv[2])
-# server.bind((IP_address, Port))
 print ("socket port : ", server_port)
 
 server.listen(10)
+
+
+def parseInput(data):
+
 
 def serverThread(conn,addr):
     while True:
         message = conn.recv(2048)
         message=message.decode()
         print("details of client : ",message)
+        bin_data, matrix = parseInput(message)
+        data_matrix = np.array(data_matrix)
+        appended_data = bin_data + '0'*(len(key)-1)
+        remainder = get_remainder(appended_data, divisor)
 
+        decoded_data = np.dot(cipher_matrix, data_matrix.T)
 
         msg_status = ""
         conn.send(msg_status.encode())
