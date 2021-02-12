@@ -20,7 +20,6 @@ def convertMatrixToString(matrix):
     return res
 
 
-
 def parseInput(data):
     data = data[2:-2]
     data = data.strip()
@@ -116,7 +115,7 @@ def convertData(data):
 
 # def convertData(data):
 
-s="penguins are one to one"
+s="dasd fuhaasfda asfda"
 print ("len of string : ", len(s))
 bin_data, data_matrix = convertData(s)
 data_matrix = np.array(data_matrix)
@@ -158,7 +157,7 @@ print ("len of string : ", len(decoded_msg))
 decoded_msg = decoded_msg.strip()
 print ("new len of string : ", len(decoded_msg))
 
-bin_data_of_decoded_string, data_matrix = convertData(s)
+bin_data_of_decoded_string, data_matrix = convertData(decoded_msg)
 appended_data = bin_data_of_decoded_string + '0'*(len(key)-1)
 
 remainder_of_server_String = get_remainder(appended_data, key)

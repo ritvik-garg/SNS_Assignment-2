@@ -2,6 +2,11 @@ import socket
 import sys
 import numpy as np
 
+key = "10001"
+ascii_a = ord('a')
+cipher_matrix = np.array([[-3, -3, -4], [0,1,1], [4,3,4]])
+cipher_matrix_inverse = np.array([[1,0,1], [4,4,3], [-4, -3, -3]])
+
 try :
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     print ("socket created")
@@ -10,14 +15,14 @@ except Exception as e:
 
 server_ip = "127.0.0.1"
 server_port = 4312
-
 server.connect((server_ip, server_port))
 
-divisor = 1001
-divisor = "1001"
-cipher_matrix = np.array([[-3, -3, -4], [1,1,1], [4,3,4]])
-ascii_a = ord('a')
-# cipher_matrix_inverse = np.array([[1,0,1], [4,4,3], [-4, -3, -3]])
+def convertToString(data):
+    res= ""
+    for i in range(len(data)):
+        for j in range(len(data[i])):
+            res = res+str(data[i][j]) + ","
+    return res[:-1]
 
 def xor(a,b):
     res = ""
@@ -47,7 +52,8 @@ def get_remainder(data, divisor):
         dummy = "0" * selected_data_len
         temp_data = xor(dummy, temp_data)
 
-    return temp_data[:-(selected_data_len-1)]
+    # return temp_data[]
+    return temp_data[-(selected_data_len-1):]
 
 
 def convertData(data):
@@ -75,33 +81,37 @@ def convertData(data):
             row.append(27)
         plaintext_matrix.append(row)
 
+
+    # print ("plaintext amatric  ", plaintext_matrix)
     return res, plaintext_matrix
 
 
 while True:
-    input_msg = sys.stdin.readline()
-
-    bin_data, data_matrix = convertData(input_msg)
+    s = input("\nEnter msg to send to server :>> ")
+    # s="penguins are one to one"
+    print ("len of string : ", len(s))
+    bin_data, data_matrix = convertData(s)
     data_matrix = np.array(data_matrix)
     appended_data = bin_data + '0'*(len(key)-1)
-    remainder = get_remainder(appended_data, divisor)
-
+    remainder = get_remainder(appended_data, key)
     encoded_data = np.dot(cipher_matrix, data_matrix.T)
-    print (bin_data)
-    print (len(data_matrix))
+    matrix_string = convertToString(encoded_data)
+    # print (bin_data)
+    # print (len(data_matrix))
     print (data_matrix)
-    print (appended_data)
-    print ("encoded data : ", encoded_data)
+    # print (appended_data)
+    # print ("remainder : ", remainder)
+    # print ("encoded data : ", encoded_data)
+    # print ("matrix string : ", matrix_string)
 
-    msg_to_server = tuple((encoded_data, remainder))
+    msg_to_server = tuple((matrix_string, remainder))
 
     msg_to_server_str = str(msg_to_server)
-    # encoded_data_str = encoded_data.tostring()
-    print (msg_to_server_str)
+    print ("msg to server : ", msg_to_server_str)
 
     server.send(msg_to_server_str.encode())
 
     from_server = server.recv(1024)
-    print ("from server : ", from_server)
+    print ("<server> : ", from_server)
 
 server.close()
